@@ -4,14 +4,14 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class transferValidation extends FormRequest
+class QrTransferRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -19,12 +19,18 @@ class transferValidation extends FormRequest
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
-    public function rules(): array
-    {
-        return [
-            'senderId'=>['required','integer','exists:bank_accounts,id'],
-            'receiverId'=>['required','integer','exists:bank_accounts,id'],
-            'amount'=>['required','numeric'],
-        ];
-    }
+    public function rules()
+{
+    return [
+        'qr_request_id' => 'required|exists:transfer_requests,id',
+    ];
+}
+
+public function messages()
+{
+    return [
+        'qr_request_id.required' => 'QR request ID is required',
+        'qr_request_id.exists' => 'QR request not found',
+    ];
+}
 }

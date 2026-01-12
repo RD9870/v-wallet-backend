@@ -11,12 +11,21 @@ return new class extends Migration
      */
     public function up(): void
     {
-                Schema::create('beneficiaries', function (Blueprint $table) {
-            $table->id();
-            $table->string('userId');
-            $table->string('beneficiaryId');
-            $table->timestamps();
-        });
+            Schema::create('beneficiaries', function (Blueprint $table) {
+        $table->id();
+
+        $table->foreignId('user_id')
+              ->constrained('users')
+              ->cascadeOnDelete();
+
+        $table->foreignId('beneficiary_id')
+              ->constrained('users')
+              ->cascadeOnDelete();
+
+        $table->timestamps();
+
+        $table->unique(['user_id', 'beneficiary_id']);
+    });
     }
 
     /**

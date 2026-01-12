@@ -11,7 +11,7 @@ class bank_accounts_Validation extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**

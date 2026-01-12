@@ -11,7 +11,7 @@ class top_up_Validation extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**

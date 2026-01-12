@@ -15,7 +15,8 @@ return new class extends Migration
             $table->id();
             $table->integer('senderId');
             $table->integer('receiverId');
-            $table->integer('amount');
+            $table->bigInteger('amount');
+             $table->string('type');
             $table->timestamps();
         });
     }

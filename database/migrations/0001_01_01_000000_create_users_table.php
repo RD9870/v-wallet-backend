@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('phone')->unique();
             $table->string('password');
-            $table->integer('balance')->default(0);
+            $table->bigInteger('balance')->default(0);
             $table->timestamps();
         });
 
