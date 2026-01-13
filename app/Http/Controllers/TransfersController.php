@@ -92,7 +92,27 @@ public function phoneTransfers(PhoneTransferRequest $request)
         ], 500);
     }
 }
+public function verifyReceiver($phone)
+{
+     $receiver = User::where('phone', $phone)->first();
 
+    if (!$receiver) {
+        return response()->json([
+            'message' => 'This phone number is not registered in our system.'
+        ], 404);
+    }
+
+     if ($receiver->id === auth()->id()) {
+        return response()->json([
+            'message' => 'You cannot transfer money to yourself.'
+        ], 400);
+    }
+
+     return response()->json([
+        'name' => $receiver->name,
+        'phone' => $receiver->phone
+    ], 200);
+}
 public function QrTransfers(QrTransferRequest $request)
 {
         $data = $request->validated();

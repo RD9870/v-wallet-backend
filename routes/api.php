@@ -15,6 +15,8 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/generate-qr', [TransfersController::class, 'generateQr']);
     Route::post('/transfers-phone', [TransfersController::class, 'phoneTransfers']);
+        Route::get('/verify-receiver/{phone}', [TransfersController::class, 'verifyReceiver']);
+
     Route::post('/transfers-qr', [TransfersController::class, 'QrTransfers']);
 });
 Route::middleware('auth:sanctum')->group(function () {

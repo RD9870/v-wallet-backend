@@ -61,7 +61,6 @@ public function store(beneficiariesValidation $request)
     ], 201);
 }
 
-
      public function show($id)
     {
         return Beneficiary::where('user_id', Auth::id())
