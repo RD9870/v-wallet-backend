@@ -15,8 +15,7 @@ class BeneficiaryController extends Controller
             ->where('user_id', Auth::id())
             ->get();
     }
-
-   public function store(beneficiariesValidation $request)
+public function store(beneficiariesValidation $request)
 {
     $userId = Auth::id();
 
@@ -26,16 +25,24 @@ class BeneficiaryController extends Controller
         ], 401);
     }
 
-       $data = $request->validated();
+    $data = $request->validated();
 
-    if ((int) $data['beneficiary_id'] === $userId) {
+    $beneficiaryUser = User::where('phone', $data['phone'])->first();
+
+    if (!$beneficiaryUser) {
+        return response()->json([
+            'message' => 'User with this phone does not exist.'
+        ], 404);
+    }
+
+    if ($beneficiaryUser->id === $userId) {
         return response()->json([
             'message' => 'You cannot add yourself as a beneficiary.'
         ], 400);
     }
 
     if (Beneficiary::where('user_id', $userId)
-        ->where('beneficiary_id', $data['beneficiary_id'])
+        ->where('beneficiary_id', $beneficiaryUser->id)
         ->exists()) {
 
         return response()->json([
@@ -45,7 +52,7 @@ class BeneficiaryController extends Controller
 
     $beneficiary = Beneficiary::create([
         'user_id' => $userId,
-        'beneficiary_id' => $data['beneficiary_id'],
+        'beneficiary_id' => $beneficiaryUser->id,
     ]);
 
     return response()->json([
@@ -53,6 +60,7 @@ class BeneficiaryController extends Controller
         'data' => $beneficiary
     ], 201);
 }
+
 
      public function show($id)
     {

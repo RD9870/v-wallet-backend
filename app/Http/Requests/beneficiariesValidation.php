@@ -21,16 +21,17 @@ class beneficiariesValidation extends FormRequest
      */
      public function rules()
     {
-        return [
-            'beneficiary_id' => 'required|exists:users,id',
-        ];
+
+    return [
+        'phone' => 'required|exists:users,phone',
+    ];
     }
 
     public function messages()
     {
         return [
-            'beneficiary_id.required' => 'Beneficiary is required.',
-            'beneficiary_id.exists' => 'Beneficiary does not exist.',
+            'phone.required' => 'Phone number is required.',
+            'phone.exists' => 'User with this phone does not exist.',
         ];
     }
 }
