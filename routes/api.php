@@ -4,12 +4,9 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\TransfersController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-<<<<<<< HEAD
 use App\Http\Controllers\BeneficiaryController;
-=======
 use App\Http\Controllers\BankController;
 use App\Http\Controllers\TopUpController;
->>>>>>> main
 
 Route::get('/user', function (Request $request) {
     return $request->user();
