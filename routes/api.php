@@ -4,7 +4,12 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\TransfersController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+<<<<<<< HEAD
 use App\Http\Controllers\BeneficiaryController;
+=======
+use App\Http\Controllers\BankController;
+use App\Http\Controllers\TopUpController;
+>>>>>>> main
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -27,3 +32,7 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout']);
 
+//Noran
+Route::apiResource('banks', BankController::class);
+Route::middleware('auth:sanctum')
+    ->post('/top-ups', [TopUpController::class, 'store']);
