@@ -11,12 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-                Schema::create('transfers', function (Blueprint $table) {
-            $table->id();
-            $table->integer('senderId');
-            $table->integer('receiverId');
+    Schema::create('transfers', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->integer('sender_id');
+            $table->integer('receiver_id');
             $table->bigInteger('amount');
-             $table->string('type');
+            $table->string('status');
+            $table->timestamp('expires_at')->nullable();
             $table->timestamps();
         });
     }
