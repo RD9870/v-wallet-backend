@@ -5,19 +5,31 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Transfer extends Model
+class Transfer  extends Model
 {
-     protected $fillable = [
-        'senderId',
-        'receiverId',
+
+    protected $primaryKey = 'id';
+    public $incrementing = false;
+    protected $keyType = 'string';
+
+    protected $fillable = [
+        'id',
+        'sender_id',
+        'receiver_id',
         'amount',
+        'status',
+        'expires_at'
     ];
-    public function sender(): BelongsTo
+
+
+      public function sender(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'senderId');
+        return $this->belongsTo(User::class, 'sender_id');
     }
-     public function receiver(): BelongsTo
+
+
+    public function receiver(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'receiverId');
+        return $this->belongsTo(User::class, 'receiver_id');
     }
 }

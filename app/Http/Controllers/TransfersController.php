@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use App\Models\User;
 use App\Models\Transfer;
-use App\Models\TransferRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -13,17 +12,19 @@ use Carbon\Carbon;
 use App\Http\Requests\GenerateQrRequest;
 use App\Http\Requests\PhoneTransferRequest;
 use App\Http\Requests\QrTransferRequest;
+use App\Http\Resources\TransferResource;
+
 class TransfersController extends Controller
 {
 
 public function generateQr(GenerateQrRequest $request)
 {
    $data= $request->validated();
-    $sender = auth()->user();
+    $sender = Auth::user();
     if ($sender->balance < $data['amount']) {
         return response()->json(['error' => 'Insufficient balance'], 400);
     }
-    $qrRequest = TransferRequest::create([
+    $qrRequest = Transfer::create([
         'id' => Str::uuid(),
         'sender_id' => $sender->id,
         'receiver_id' => null,
@@ -47,7 +48,7 @@ public function generateQr(GenerateQrRequest $request)
 public function phoneTransfers(PhoneTransferRequest $request)
 {
     $data = $request->validated();
-    $sender = auth()->user();
+    $sender = Auth::user();
     try {
         return DB::transaction(function () use ($data, $sender) {
 
@@ -70,7 +71,7 @@ public function phoneTransfers(PhoneTransferRequest $request)
             $sender->decrement('balance', $data['amount']);
             $receiver->increment('balance', $data['amount']);
 
-            $transfer = TransferRequest::create([
+            $transfer = Transfer::create([
                 'id'          => Str::uuid(),
                 'sender_id'   => $sender->id,
                 'receiver_id' => $receiver->id,
@@ -118,9 +119,9 @@ public function QrTransfers(QrTransferRequest $request)
         $data = $request->validated();
 
 
-    $receiver = auth()->user();
+    $receiver = Auth::user();
 
-    $qrRequest = TransferRequest::find($data['qr_request_id']);
+    $qrRequest = Transfer::find($data['qr_request_id']);
 
     if ($qrRequest->status !== 'pending') {
         return response()->json(['error' => 'This QR has already been used or expired'], 400);
@@ -148,10 +149,48 @@ public function QrTransfers(QrTransferRequest $request)
     return response()->json([
         'message' => 'Transfer successful',
         'sender_balance' => $sender->balance,
-        'receiver_balance' => $receiver->balance
+        'receiver_balance' => $receiver->balance,
     ]);
 }
 
+public function getHistory(Request $request){
+    if ($request->has("limit")){
+        $transfers = Auth::user()
+              ->allTransfers()
+              ->with(['sender', 'receiver'])
+              ->latest()
+              ->paginate($request->limit);
+    }
+    else{
 
+        $transfers = Auth::user()
+              ->allTransfers()
+              ->with(['sender', 'receiver'])
+              ->latest()
+              ->get();
+    }
+    return TransferResource::collection($transfers);
+}
 
+public function filterHistory(Request $request){
+if ($request->has("date")){
+    $date = Carbon::parse($request->date)->format('Y-m-d');
+    $transfers = Transfer::where(function($query) {
+                $userId = Auth::id();
+                $query->where('sender_id', $userId)
+                      ->orWhere('receiver_id', $userId);
+            })
+        ->whereDate('transfers.created_at', $date)
+        ->get();
+        return response()->json([
+        'date' => $date,
+        "data" =>TransferResource::collection($transfers)
+    ],);
+}
+else{
+        return response()->json([
+        'message' => 'no date included'
+    ], 400);
+}
+}
 }

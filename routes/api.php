@@ -15,19 +15,24 @@ Route::get('/user', function (Request $request) {
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::middleware('auth:sanctum')->group(function () {
-    Route::post('/generate-qr', [TransfersController::class, 'generateQr']);
-    Route::post('/transfers-phone', [TransfersController::class, 'phoneTransfers']);
-        Route::get('/verify-receiver/{phone}', [TransfersController::class, 'verifyReceiver']);
-
-    Route::post('/transfers-qr', [TransfersController::class, 'QrTransfers']);
+Route::post('/transfers-qr', [TransfersController::class, 'QrTransfers']);
+Route::get('/verify-receiver/{phone}', [TransfersController::class, 'verifyReceiver']);
+Route::post('/generate-qr', [TransfersController::class, 'generateQr']);
+Route::post('/transfers-phone', [TransfersController::class, 'phoneTransfers']);
+Route::post('/transfers-qr', [TransfersController::class, 'QrTransfers']);
+Route::get('/getTransferHistory', [TransfersController::class, 'getHistory']);
+Route::get('/filterTransferHistory', [TransfersController::class, 'filterHistory']);
 });
+
+
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/beneficiaries', [BeneficiaryController::class, 'index']);
     Route::post('/beneficiaries', [BeneficiaryController::class, 'store']);
     Route::delete('/beneficiaries/{beneficiaryId}', [BeneficiaryController::class, 'destroy']);
 
     });
-Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout']);
+
+    Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout']);
 
 //Noran
 Route::apiResource('banks', BankController::class);
