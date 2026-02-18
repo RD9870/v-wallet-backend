@@ -81,7 +81,12 @@ public function phoneTransfers(PhoneTransferRequest $request)
 
             return response()->json([
                 'message' => 'Transfer completed successfully',
-                'data'    => $transfer,
+                'data'    => [
+                    'transfer_id'      => $transfer->id,
+                    'sender_balance'   => $sender->balance,
+                    'amount'      => $transfer->amount,
+                    'date' => $transfer->created_at
+                ]
             ], 200);
 
         });
